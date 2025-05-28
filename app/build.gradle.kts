@@ -3,6 +3,8 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.kotlinx.serialization)
+  alias(libs.plugins.hilt)
+  kotlin("kapt")
 }
 
 android {
@@ -37,6 +39,10 @@ android {
   }
 }
 
+kapt {
+  correctErrorTypes = true
+}
+
 dependencies {
 
   implementation(libs.androidx.core.ktx)
@@ -54,8 +60,17 @@ dependencies {
   androidTestImplementation(libs.androidx.ui.test.junit4)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
-  implementation(libs.ktor.server.netty)
   implementation(libs.ktor.client.core)
   implementation(libs.ktor.client.cio)
+  implementation(libs.ktor.client.logging)
+  implementation(libs.ktor.client.content.negotiation)
+  implementation(libs.ktor.serialization.kotlinx.json)
+  implementation(libs.ktor.client.okhttp)
   implementation(libs.kotlinx.serialization.json)
+  implementation(libs.hilt.android)
+  kapt(libs.hilt.compiler)
+  implementation(libs.androidx.hilt.navigation.compose)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
+  implementation(libs.material.icons.extended)
 }
