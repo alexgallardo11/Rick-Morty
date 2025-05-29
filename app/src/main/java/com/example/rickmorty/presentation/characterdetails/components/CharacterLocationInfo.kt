@@ -17,53 +17,70 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.rickmorty.domain.model.Character
 
 @Composable
 fun CharacterLocationInfo(character: Character, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+  Card(
+    modifier = modifier
+      .padding(8.dp)
+      .alpha(0.9f),
+    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.surfaceVariant
+    )
+  ) {
+    Column(modifier = Modifier.padding(16.dp)) {
+      Text(
+        text = "Ubicaciones",
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+      )
+      Spacer(modifier = Modifier.height(8.dp))
+
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+          imageVector = Icons.Default.Public,
+          contentDescription = "Origen",
+          tint = MaterialTheme.colorScheme.secondary
         )
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Ubicaciones",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Public,
-                    contentDescription = "Origen",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Origen: ${character.origin.name}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+          text = buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+              append("Origen: ")
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Ubicación",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Ubicación: ${character.location.name}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            append(character.origin.name)
+          },
+          style = MaterialTheme.typography.bodyMedium
+        )
+      }
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+          imageVector = Icons.Default.LocationOn,
+          contentDescription = "Ubicación",
+          tint = MaterialTheme.colorScheme.secondary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+          text = buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+              append("Ubicación: ")
             }
-        }
+            append(character.location.name)
+          },
+          style = MaterialTheme.typography.bodyMedium
+        )
+      }
     }
+  }
 }

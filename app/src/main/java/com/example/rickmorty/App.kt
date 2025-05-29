@@ -17,38 +17,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.rickmorty.presentation.AppNavHost
-import com.example.rickmorty.ui.theme.RickMortyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    var showSearch by remember { mutableStateOf(false) }
-    var showFilter by remember { mutableStateOf(false) }
-    RickMortyTheme{
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = { Text("Rick & Morty") },
-                    actions = {
-                        IconButton(onClick = { showSearch = !showSearch }) {
-                            Icon(Icons.Default.Search, contentDescription = "Buscar")
-                        }
-                        IconButton(onClick = { showFilter = true }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Filtrar")
-                        }
-                    }
-                )
-            }
-        ) { padding ->
-            AppNavHost(
-                contentPadding = padding,
-                showSearch = showSearch,
-                showFilter = showFilter,
-                onSearchDismiss = { showSearch = false },
-                onFilterDismiss = { showFilter = false }
-            )
-        }
-    }
+  var showSearch by remember { mutableStateOf(false) }
+  var showFilter by remember { mutableStateOf(false) }
 
+  Scaffold(
+    modifier = Modifier.fillMaxSize(),
+    topBar = {
+      TopAppBar(
+        title = { Text("Rick & Morty") },
+        actions = {
+          IconButton(onClick = { showSearch = !showSearch }) {
+            Icon(Icons.Default.Search, contentDescription = "Buscar")
+          }
+          IconButton(onClick = { showFilter = true }) {
+            Icon(Icons.Default.FilterList, contentDescription = "Filtrar")
+          }
+        }
+      )
+    }
+  ) { padding ->
+    AppNavHost(
+      contentPadding = padding,
+      showSearch = showSearch,
+      showFilter = showFilter,
+      onSearchDismiss = { showSearch = false },
+      onFilterDismiss = { showFilter = false }
+    )
+  }
 }
