@@ -60,11 +60,7 @@ class CharacterRepository @Inject constructor(
                 db.characterDao().getCharactersPagedFiltered(name, status, species, gender)
             }
         ).flow.map { pagingData ->
-            Log.d("CharacterRepository", "PagingData emitted: $pagingData")
-            pagingData.map {
-                Log.d("CharacterRepository", "Mapping entity to domain: $it")
-                it.toDomain()
-            }
+            pagingData.map { it.toDomain() }
         }
     }
 }

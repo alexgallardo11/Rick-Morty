@@ -26,36 +26,44 @@ val LocalNavigator = compositionLocalOf<NavHostController> {
 }
 
 @Composable
-fun AppNavHost(contentPadding: PaddingValues) {
-  val navController = rememberNavController()
-  CompositionLocalProvider(LocalNavigator provides navController) {
-    NavHost(
-      navController = navController,
-      startDestination = Routes.CHARACTERS_LIST
-    ) {
-      composable(Routes.CHARACTERS_LIST) {
-        CharactersListScreen(
-          modifier = Modifier.padding(contentPadding),
-          onCharacterClick = { character ->
-            navController.navigate(Routes.characterDetailRoute(character.id))
-          },
-          onFilterClick = {}
-        )
-      }
-      composable(
-        route = Routes.CHARACTER_DETAIL,
-        arguments = listOf(
-          navArgument("characterId") { type = NavType.IntType }
-        )
-      ) { backStackEntry ->
-        val characterId =
-          backStackEntry.arguments?.getInt("characterId") ?: return@composable
-        CharacterDetailScreen(
-          modifier = Modifier.padding(contentPadding),
-          characterId = characterId,
-          onBack = { navController.popBackStack() }
-        )
-      }
+fun AppNavHost(
+    contentPadding: PaddingValues,
+    showSearch: Boolean,
+    showFilter: Boolean,
+    onSearchDismiss: () -> Unit,
+    onFilterDismiss: () -> Unit
+) {
+    val navController = rememberNavController()
+    CompositionLocalProvider(LocalNavigator provides navController) {
+        NavHost(
+            navController = navController,
+            startDestination = Routes.CHARACTERS_LIST
+        ) {
+            composable(Routes.CHARACTERS_LIST) {
+                CharactersListScreen(
+                    modifier = Modifier.padding(contentPadding),
+                    onCharacterClick = { character ->
+                        navController.navigate(Routes.characterDetailRoute(character.id))
+                    },
+                    showSearch = showSearch,
+                    showFilter = showFilter,
+                    onSearchDismiss = onSearchDismiss,
+                    onFilterDismiss = onFilterDismiss
+                )
+            }
+            composable(
+                route = Routes.CHARACTER_DETAIL,
+                arguments = listOf(
+                    navArgument("characterId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val characterId = backStackEntry.arguments?.getInt("characterId") ?: return@composable
+                CharacterDetailScreen(
+                    modifier = Modifier.padding(contentPadding),
+                    characterId = characterId,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+        }
     }
-  }
 }

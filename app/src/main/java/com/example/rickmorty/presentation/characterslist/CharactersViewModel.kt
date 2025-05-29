@@ -17,6 +17,15 @@ import javax.inject.Inject
 class CharactersViewModel @Inject constructor(
     private val getCharactersPagedUseCase: GetCharactersPagedUseCase
 ) : ViewModel() {
+    data class CharactersUiState(
+        val searchQuery: String = "",
+        val status: String? = null,
+        val species: String? = null,
+        val gender: String? = null,
+        val isLoading: Boolean = false,
+        val error: String? = null
+    )
+
     private val _uiState = MutableStateFlow(CharactersUiState())
     val uiState: StateFlow<CharactersUiState> = _uiState.asStateFlow()
 
@@ -24,9 +33,12 @@ class CharactersViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val charactersPagingFlow = uiState
         .flatMapLatest { state ->
-            Log.d("CharactersViewModel", "flatMapLatest: searchQuery=${state.searchQuery}")
+            Log.d("CharactersViewModel", "flatMapLatest: searchQuery=${state.searchQuery}, status=${state.status}, species=${state.species}, gender=${state.gender}")
             getCharactersPagedUseCase(
-                name = state.searchQuery.takeIf { it.isNotBlank() }
+                name = state.searchQuery.takeIf { it.isNotBlank() },
+                status = state.status,
+                species = state.species,
+                gender = state.gender
             )
         }
         .cachedIn(viewModelScope)
@@ -34,5 +46,14 @@ class CharactersViewModel @Inject constructor(
     fun updateSearchQuery(query: String) {
         Log.d("CharactersViewModel", "updateSearchQuery: $query")
         _uiState.value = _uiState.value.copy(searchQuery = query)
+    }
+
+    fun updateFilters(status: String?, species: String?, gender: String?) {
+        Log.d("CharactersViewModel", "updateFilters: status=$status, species=$species, gender=$gender")
+        _uiState.value = _uiState.value.copy(
+            status = status,
+            species = species,
+            gender = gender
+        )
     }
 }
