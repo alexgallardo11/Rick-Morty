@@ -19,8 +19,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +51,7 @@ import com.example.rickmorty.presentation.characterslist.components.SearchBar
 import com.example.rickmorty.presentation.components.ErrorMessage
 import com.example.rickmorty.presentation.components.Loading
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharactersListScreen(
   modifier: Modifier = Modifier,
@@ -76,6 +79,7 @@ fun CharactersListScreen(
   val statusOptions = listOf<CharacterFilters.Status?>(null) + CharacterFilters.Status.entries
   val genderOptions = listOf<CharacterFilters.Gender?>(null) + CharacterFilters.Gender.entries
   val speciesOptions = listOf<CharacterFilters.Species?>(null) + CharacterFilters.Species.entries
+  val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
   Box(modifier = modifier.fillMaxSize()) {
     Image(
@@ -106,6 +110,7 @@ fun CharactersListScreen(
 
     if (showFilter) {
       FilterModalBottomSheet(
+        state = sheetState ,
         onFilterDismiss = onFilterDismiss,
         statusOptions = statusOptions,
         selectedStatus = selectedStatus,
