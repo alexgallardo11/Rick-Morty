@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.rickmorty.presentation.characterdetails.CharacterDetailScreen
@@ -31,9 +34,19 @@ fun AppNavHost(
     showSearch: Boolean,
     showFilter: Boolean,
     onSearchDismiss: () -> Unit,
-    onFilterDismiss: () -> Unit
+    onFilterDismiss: () -> Unit,
+    onScreenChanged: (String) -> Unit,
+    onNavigateBack: ((() -> Unit) -> Unit)
 ) {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    LaunchedEffect(currentRoute) {
+        if (currentRoute != null) onScreenChanged(currentRoute)
+    }
+    LaunchedEffect(navController) {
+        onNavigateBack { navController.popBackStack() }
+    }
     CompositionLocalProvider(LocalNavigator provides navController) {
         NavHost(
             navController = navController,
