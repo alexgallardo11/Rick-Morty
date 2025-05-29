@@ -1,10 +1,9 @@
-package com.example.rickmorty.presentation
+package com.example.rickmorty.presentation.characterslist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.rickmorty.domain.usecase.GetCharactersPagedUseCase
-import com.example.rickmorty.presentation.characterslist.CharactersUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

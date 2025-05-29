@@ -1,5 +1,6 @@
 package com.example.rickmorty.presentation.characterslist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,109 +29,139 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
+import com.example.rickmorty.R
 import com.example.rickmorty.domain.model.Character
-import com.example.rickmorty.presentation.CharactersViewModel
 
 @Composable
 fun CharactersListScreen(
-  modifier: Modifier = Modifier,
-  onCharacterClick: (Character) -> Unit = {},
-  onFilterClick: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onCharacterClick: (Character) -> Unit,
+    onFilterClick: () -> Unit
 ) {
-  val viewModel: CharactersViewModel = hiltViewModel()
-  val uiState by viewModel.uiState.collectAsState()
-  val pagingItems = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
+    val viewModel: CharactersViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val pagingItems = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
 
-  Column(modifier = modifier.fillMaxSize()) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      OutlinedTextField(
-        value = uiState.searchQuery,
-        onValueChange = { viewModel.updateSearchQuery(it) },
-        modifier = Modifier.weight(1f),
-        label = { Text("Buscar personaje") },
-        singleLine = true
-      )
-      IconButton(onClick = { onFilterClick() }) {
-        Icon(
-          imageVector = Icons.Default.FilterList,
-          contentDescription = "Filtrar"
+    Box(modifier = modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = "background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
-      }
-    }
 
-    if (uiState.error != null) {
-      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = uiState.error ?: "", color = Color.Red)
-      }
-    }
+        when {
+            pagingItems.loadState.refresh is LoadState.Loading && pagingItems.itemCount == 0 -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            pagingItems.loadState.refresh is LoadState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error al cargar personajes", color = Color.Red)
+                }
+            }
+            pagingItems.loadState.refresh is LoadState.NotLoading && pagingItems.itemCount == 0 -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Todavía no hay personajes")
+                }
+            }
+            else -> {
+                Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.searchQuery,
+                            onValueChange = { viewModel.updateSearchQuery(it) },
+                            modifier = Modifier.weight(1f),
+                            label = { Text("Buscar personaje") },
+                            singleLine = true
+                        )
+                        IconButton(onClick = { onFilterClick() }) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = "Filtrar"
+                            )
+                        }
+                    }
 
-    LazyColumn(
-      modifier = Modifier.fillMaxSize(),
-      contentPadding = PaddingValues(8.dp)
-    ) {
-      items(pagingItems.itemCount) { index ->
-        val character = pagingItems[index]
-        if (character != null) {
-          CharacterCard(character = character, onClick = { onCharacterClick(character) })
-        }
-      }
-      when (pagingItems.loadState.append) {
-        is LoadState.Loading -> {
-          item {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-              CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    if (uiState.error != null) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = uiState.error ?: "", color = Color.Red)
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(8.dp)
+                    ) {
+                        items(pagingItems.itemCount) { index ->
+                            val character = pagingItems[index]
+                            if (character != null) {
+                                CharacterCard(character = character, onClick = { onCharacterClick(character) })
+                            }
+                        }
+                        when (pagingItems.loadState.append) {
+                            is LoadState.Loading -> {
+                                item {
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                                    }
+                                }
+                            }
+                            is LoadState.Error -> {
+                                item {
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Text("Error al cargar más personajes", color = Color.Red)
+                                    }
+                                }
+                            }
+                            else -> {}
+                        }
+                    }
+                }
             }
-          }
         }
-        is LoadState.Error -> {
-          item {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-              Text("Error al cargar más personajes", color = Color.Red)
-            }
-          }
-        }
-        else -> {}
-      }
     }
-  }
 }
 
 @Composable
 fun CharacterCard(character: Character, onClick: () -> Unit) {
-  Card(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(vertical = 4.dp)
-      .clickable { onClick() },
-    elevation = CardDefaults.cardElevation(2.dp)
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(8.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
-      AsyncImage(
-        model = character.image,
-        contentDescription = character.name,
-        modifier = Modifier.size(60.dp)
-      )
-      Spacer(modifier = Modifier.width(12.dp))
-      Column {
-        Text(text = character.name, style = MaterialTheme.typography.titleMedium)
-        Text(
-          text = "${character.status} • ${character.species}",
-          style = MaterialTheme.typography.bodyMedium
-        )
-      }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            AsyncImage(
+                model = character.image,
+                contentDescription = character.name,
+                modifier = Modifier.size(60.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(text = character.name, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = "${character.status} • ${character.species}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
-  }
 }

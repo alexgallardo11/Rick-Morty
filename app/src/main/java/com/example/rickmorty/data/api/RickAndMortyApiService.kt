@@ -29,6 +29,7 @@ class RickAndMortyApiService(private val client: HttpClient) {
         }
         val body = response.body<CharacterResponseDto>()
         Log.d(TAG, "getCharacters: received ${body.results.size} characters (page $page)")
+        Log.d(TAG, "getCharacters: received ${body.results}")
         return body
     }
 
