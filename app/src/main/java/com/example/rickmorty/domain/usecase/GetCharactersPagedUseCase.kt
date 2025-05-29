@@ -1,29 +1,28 @@
 package com.example.rickmorty.domain.usecase
 
+import androidx.paging.PagingData
+import com.example.rickmorty.domain.model.Character
+import kotlinx.coroutines.flow.Flow
 import com.example.rickmorty.data.repository.CharacterRepository
-import com.example.rickmorty.domain.model.CharacterList
 import javax.inject.Inject
 
-
 interface GetCharactersPagedUseCase {
-    suspend operator fun invoke(
-        page: Int = 1,
+    operator fun invoke(
         name: String? = null,
         status: String? = null,
         species: String? = null,
         gender: String? = null
-    ): CharacterList
+    ): Flow<PagingData<Character>>
 }
-
 
 class GetCharactersPagedUseCaseImpl @Inject constructor(
     private val repository: CharacterRepository
 ) : GetCharactersPagedUseCase {
-    override suspend fun invoke(
-        page: Int,
+    override fun invoke(
         name: String?,
         status: String?,
         species: String?,
         gender: String?
-    ): CharacterList = repository.getCharactersPaged(page, name, status, species, gender)
+    ): Flow<PagingData<Character>> =
+        repository.getCharactersPagingFlow(name, status, species, gender)
 }

@@ -1,4 +1,4 @@
-package com.example.rickmorty.data
+package com.example.rickmorty.data.api
 
 import android.util.Log
 import com.example.rickmorty.data.model.CharacterDto
