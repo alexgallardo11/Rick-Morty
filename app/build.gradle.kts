@@ -4,7 +4,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.kotlinx.serialization)
   alias(libs.plugins.hilt)
-  kotlin("kapt")
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -39,9 +39,6 @@ android {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-}
 
 dependencies {
 
@@ -68,7 +65,7 @@ dependencies {
   implementation(libs.ktor.client.okhttp)
   implementation(libs.kotlinx.serialization.json)
   implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
   implementation(libs.androidx.hilt.navigation.compose)
   implementation(libs.coil.compose)
   implementation(libs.coil.network.okhttp)
@@ -79,5 +76,5 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.room.paging)
-  kapt(libs.androidx.room.compiler)
+  ksp(libs.androidx.room.compiler)
 }
