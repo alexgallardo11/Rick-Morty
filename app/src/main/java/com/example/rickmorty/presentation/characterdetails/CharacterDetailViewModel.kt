@@ -22,12 +22,14 @@ class CharacterDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val character = getCharacterDetailUseCase(id)
-                _uiState.value = CharacterDetailUiState.Success(character)
+                if (character != null) {
+                    _uiState.value = CharacterDetailUiState.Success(character)
+                } else {
+                    _uiState.value = CharacterDetailUiState.Error("Sin conexión y sin datos locales para este personaje.")
+                }
             } catch (e: Exception) {
                 _uiState.value = CharacterDetailUiState.Error(e.localizedMessage ?: "Error desconocido")
             }
         }
     }
 }
-
-

@@ -47,7 +47,12 @@ fun CharacterDetailScreen(
             is CharacterDetailUiState.Error -> {
                 val message = (uiState as CharacterDetailUiState.Error).message
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = message, color = Color.Red)
+                    Text(
+                        text = if (message.contains("Unable to resolve host", ignoreCase = true) || message.contains("failed to connect", ignoreCase = true)) {
+                            "Sin conexión y sin datos locales para este personaje."
+                        } else message,
+                        color = Color.Red
+                    )
                 }
             }
             is CharacterDetailUiState.Success -> {

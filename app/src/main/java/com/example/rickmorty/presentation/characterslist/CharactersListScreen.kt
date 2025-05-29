@@ -1,5 +1,6 @@
 package com.example.rickmorty.presentation.characterslist
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ fun CharactersListScreen(
     val pagingItems = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
 
     Box(modifier = modifier.fillMaxSize()) {
+        Log.d("CharactersListScreen", "UIState: $uiState, PagingItemsCount: ${pagingItems.itemCount}, LoadState: ${pagingItems.loadState.refresh}")
         Image(
             painter = painterResource(id = R.drawable.background),
             contentDescription = "background",
@@ -58,22 +60,26 @@ fun CharactersListScreen(
         )
 
         when {
-            pagingItems.loadState.refresh is LoadState.Loading && pagingItems.itemCount == 0 -> {
+            (pagingItems.loadState.refresh is LoadState.Loading && pagingItems.itemCount == 0) ||
+            (pagingItems.loadState.refresh is LoadState.Error && pagingItems.itemCount == 0 && !pagingItems.loadState.refresh.endOfPaginationReached) -> {
+                Log.d("CharactersListScreen", "Estado: Loading inicial o error transitorio, itemCount=0")
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
-            pagingItems.loadState.refresh is LoadState.Error -> {
+            pagingItems.loadState.refresh is LoadState.Error && pagingItems.itemCount == 0 -> {
+                val error = (pagingItems.loadState.refresh as LoadState.Error).error
+                val isNetworkError = error is java.io.IOException || error.message?.contains("Unable to resolve host") == true
+                Log.d("CharactersListScreen", "Estado: Error final, isNetworkError=$isNetworkError, itemCount=${pagingItems.itemCount}, errorMsg=${error.message}")
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Error al cargar personajes", color = Color.Red)
+                    Text(
+                        text = if (isNetworkError) "Sin conexión y sin datos locales." else "Error al cargar personajes",
+                        color = Color.Red
+                    )
                 }
             }
-            pagingItems.loadState.refresh is LoadState.NotLoading && pagingItems.itemCount == 0 -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Todavía no hay personajes")
-                }
-            }
-            else -> {
+            pagingItems.itemCount > 0 -> {
+                Log.d("CharactersListScreen", "Estado: Mostrando lista, itemCount=${pagingItems.itemCount}")
                 Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
                     Row(
                         modifier = Modifier
@@ -97,6 +103,7 @@ fun CharactersListScreen(
                     }
 
                     if (uiState.error != null) {
+                        Log.d("CharactersListScreen", "UI Error: ${uiState.error}")
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(text = uiState.error ?: "", color = Color.Red)
                         }
@@ -109,12 +116,14 @@ fun CharactersListScreen(
                         items(pagingItems.itemCount) { index ->
                             val character = pagingItems[index]
                             if (character != null) {
+                                Log.d("CharactersListScreen", "Pintando personaje: ${character.name}")
                                 CharacterCard(character = character, onClick = { onCharacterClick(character) })
                             }
                         }
                         when (pagingItems.loadState.append) {
                             is LoadState.Loading -> {
                                 item {
+                                    Log.d("CharactersListScreen", "Estado: Append Loading")
                                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                         CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                                     }
@@ -122,6 +131,7 @@ fun CharactersListScreen(
                             }
                             is LoadState.Error -> {
                                 item {
+                                    Log.d("CharactersListScreen", "Estado: Append Error")
                                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                         Text("Error al cargar más personajes", color = Color.Red)
                                     }
@@ -130,6 +140,12 @@ fun CharactersListScreen(
                             else -> {}
                         }
                     }
+                }
+            }
+            pagingItems.loadState.refresh is LoadState.NotLoading && pagingItems.itemCount == 0 -> {
+                Log.d("CharactersListScreen", "Estado: NotLoading, lista vacía")
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.rickmorty.presentation.characterslist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -23,6 +24,7 @@ class CharactersViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val charactersPagingFlow = uiState
         .flatMapLatest { state ->
+            Log.d("CharactersViewModel", "flatMapLatest: searchQuery=${state.searchQuery}")
             getCharactersPagedUseCase(
                 name = state.searchQuery.takeIf { it.isNotBlank() }
             )
@@ -30,6 +32,7 @@ class CharactersViewModel @Inject constructor(
         .cachedIn(viewModelScope)
 
     fun updateSearchQuery(query: String) {
+        Log.d("CharactersViewModel", "updateSearchQuery: $query")
         _uiState.value = _uiState.value.copy(searchQuery = query)
     }
 }
