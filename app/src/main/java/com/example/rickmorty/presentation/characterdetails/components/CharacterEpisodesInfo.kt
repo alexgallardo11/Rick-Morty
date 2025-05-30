@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rickmorty.R
 
 @Composable
 fun CharacterEpisodesInfo(episodeCount: Int, modifier: Modifier = Modifier) {
@@ -32,7 +34,7 @@ fun CharacterEpisodesInfo(episodeCount: Int, modifier: Modifier = Modifier) {
   ) {
     Column(modifier = Modifier.padding(16.dp)) {
       Text(
-        text = "Episodios",
+        text = stringResource(R.string.episodes),
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary
       )
@@ -41,12 +43,12 @@ fun CharacterEpisodesInfo(episodeCount: Int, modifier: Modifier = Modifier) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
           imageVector = Icons.Default.Tv,
-          contentDescription = "Episodios",
+          contentDescription = stringResource(R.string.episodes),
           tint = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-          text = "Aparece en $episodeCount episodios",
+          text = stringResource(R.string.appears_in_episodes, episodeCount),
           style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onSecondaryContainer
         )

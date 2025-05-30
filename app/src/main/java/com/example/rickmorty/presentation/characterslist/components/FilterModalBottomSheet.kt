@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rickmorty.R
 import com.example.rickmorty.domain.enums.CharacterFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,12 +41,12 @@ fun FilterModalBottomSheet(
   ModalBottomSheet(onDismissRequest = onFilterDismiss, sheetState = state) {
     Column(modifier = Modifier.padding(24.dp)) {
       Text(
-        "Filtrar personajes",
+        stringResource(R.string.filter_characters),
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary
       )
       Spacer(modifier = Modifier.height(16.dp))
-      Text("Estado", style = MaterialTheme.typography.labelMedium)
+      Text(stringResource(R.string.status), style = MaterialTheme.typography.labelMedium)
       Spacer(modifier = Modifier.height(8.dp))
       DropdownSelectorEnum(
         options = statusOptions,
@@ -52,7 +54,7 @@ fun FilterModalBottomSheet(
         onSelected = onStatusSelected,
       )
       Spacer(modifier = Modifier.height(16.dp))
-      Text("Especie", style = MaterialTheme.typography.labelMedium)
+      Text(stringResource(R.string.species), style = MaterialTheme.typography.labelMedium)
       Spacer(modifier = Modifier.height(8.dp))
       DropdownSelectorEnum(
         options = speciesOptions,
@@ -60,7 +62,7 @@ fun FilterModalBottomSheet(
         onSelected = onSpeciesSelected,
       )
       Spacer(modifier = Modifier.height(16.dp))
-      Text("Género", style = MaterialTheme.typography.labelMedium)
+      Text(stringResource(R.string.gender), style = MaterialTheme.typography.labelMedium)
       Spacer(modifier = Modifier.height(8.dp))
       DropdownSelectorEnum(
         options = genderOptions,
@@ -69,9 +71,9 @@ fun FilterModalBottomSheet(
       )
       Spacer(modifier = Modifier.height(16.dp))
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onFilterDismiss) { Text("Cancelar") }
+        TextButton(onClick = onFilterDismiss) { Text(stringResource(R.string.cancel)) }
         Spacer(modifier = Modifier.width(8.dp))
-        TextButton(onClick = onApply) { Text("Aplicar") }
+        TextButton(onClick = onApply) { Text(stringResource(R.string.apply)) }
       }
     }
   }

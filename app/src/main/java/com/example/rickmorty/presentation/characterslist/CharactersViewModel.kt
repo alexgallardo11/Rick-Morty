@@ -17,14 +17,6 @@ import javax.inject.Inject
 class CharactersViewModel @Inject constructor(
     private val getCharactersPagedUseCase: GetCharactersPagedUseCase
 ) : ViewModel() {
-    data class CharactersUiState(
-        val searchQuery: String = "",
-        val status: String? = null,
-        val species: String? = null,
-        val gender: String? = null,
-        val isLoading: Boolean = false,
-        val error: String? = null
-    )
 
     private val _uiState = MutableStateFlow(CharactersUiState())
     val uiState: StateFlow<CharactersUiState> = _uiState.asStateFlow()

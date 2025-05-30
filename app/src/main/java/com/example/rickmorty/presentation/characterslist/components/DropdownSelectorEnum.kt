@@ -23,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rickmorty.R
 import com.example.rickmorty.domain.enums.CharacterFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,9 +36,9 @@ fun <T> DropdownSelectorEnum(
     onSelected: (T?) -> Unit,
 ) where T : Enum<T> {
     var expanded by remember { mutableStateOf(false) }
-    val displayLabel: (T?) -> String = { opt ->
+    val displayLabel: @Composable (T?) -> String = { opt ->
         when (opt) {
-            null -> "(Cualquiera)"
+            null -> stringResource(R.string.any_option)
             is CharacterFilters.Status -> opt.label
             is CharacterFilters.Gender -> opt.label
             is CharacterFilters.Species -> opt.label
@@ -54,7 +56,7 @@ fun <T> DropdownSelectorEnum(
             trailingIcon = { 
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Expandir menú",
+                    contentDescription = stringResource(R.string.dropdown_expand_icon),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(end = 4.dp)
                 )

@@ -31,7 +31,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rickmorty.R
 
 @Composable
 fun ColumnScope.SearchBar(
@@ -64,7 +66,7 @@ fun ColumnScope.SearchBar(
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
           imageVector = Icons.Default.Search,
-          contentDescription = "Icono de búsqueda",
+          contentDescription = stringResource(R.string.search_icon),
           tint = MaterialTheme.colorScheme.primary,
           modifier = Modifier.padding(start = 12.dp, end = 8.dp)
         )
@@ -85,7 +87,7 @@ fun ColumnScope.SearchBar(
           decorationBox = { innerTextField ->
             if (searchQuery.isEmpty()) {
               Text(
-                text = "Buscar personaje",
+                text = stringResource(R.string.search_character),
                 style = MaterialTheme.typography.bodyMedium.copy(
                   color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
@@ -100,7 +102,7 @@ fun ColumnScope.SearchBar(
         }) {
           Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Cerrar búsqueda",
+            contentDescription = stringResource(R.string.close_search),
             tint = MaterialTheme.colorScheme.primary
           )
         }

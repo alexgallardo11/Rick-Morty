@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +51,9 @@ import com.example.rickmorty.presentation.characterslist.components.FilterModalB
 import com.example.rickmorty.presentation.characterslist.components.SearchBar
 import com.example.rickmorty.presentation.components.ErrorMessage
 import com.example.rickmorty.presentation.components.Loading
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.core.tween
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,17 +68,15 @@ fun CharactersListScreen(
   val viewModel: CharactersViewModel = hiltViewModel()
   val uiState by viewModel.uiState.collectAsState()
   val pagingItems = viewModel.charactersPagingFlow.collectAsLazyPagingItems()
-  val uiStatus = uiState.status
-  val uiSpecies = uiState.species
-  val uiGender = uiState.gender
-  var selectedStatus by remember(showFilter, uiStatus) {
-    mutableStateOf(CharacterFilters.Status.entries.find { it.label == uiStatus })
+
+  var selectedStatus by remember(showFilter, uiState.status) {
+    mutableStateOf(CharacterFilters.Status.entries.find { it.label == uiState.status })
   }
-  var selectedSpecies by remember(showFilter, uiSpecies) {
-    mutableStateOf(CharacterFilters.Species.entries.find { it.label == uiSpecies })
+  var selectedSpecies by remember(showFilter, uiState.species) {
+    mutableStateOf(CharacterFilters.Species.entries.find { it.label == uiState.species })
   }
-  var selectedGender by remember(showFilter, uiGender) {
-    mutableStateOf(CharacterFilters.Gender.entries.find { it.label == uiGender })
+  var selectedGender by remember(showFilter, uiState.gender) {
+    mutableStateOf(CharacterFilters.Gender.entries.find { it.label == uiState.gender })
   }
   val statusOptions = listOf<CharacterFilters.Status?>(null) + CharacterFilters.Status.entries
   val genderOptions = listOf<CharacterFilters.Gender?>(null) + CharacterFilters.Gender.entries
@@ -149,32 +151,41 @@ private fun CharactersListContent(
 
     pagingItems.loadState.refresh is LoadState.Error && pagingItems.itemCount == 0 -> {
       val errorMsg = (pagingItems.loadState.refresh as? LoadState.Error)?.error?.message
-        ?: "Error al cargar personajes"
+        ?: stringResource(R.string.error_loading_characters)
       ErrorMessage(text = errorMsg)
     }
 
     pagingItems.itemCount > 0 -> {
       if (error != null) ErrorMessage(text = error)
-      LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp)
+      val showList = pagingItems.loadState.refresh is LoadState.NotLoading && pagingItems.itemCount > 0
+      if (!showList) {
+        Loading()
+      }
+      AnimatedVisibility(
+        visible = showList,
+        enter = fadeIn(animationSpec = tween(900))
       ) {
-        items(pagingItems.itemCount) { index ->
-          val character = pagingItems[index]
-          if (character != null) {
-            CharacterCard(character = character, onClick = { onCharacterClick(character) })
+        LazyColumn(
+          modifier = Modifier.fillMaxSize(),
+          contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+          items(pagingItems.itemCount) { index ->
+            val character = pagingItems[index]
+            if (character != null) {
+              CharacterCard(character = character, onClick = { onCharacterClick(character) })
+            }
           }
-        }
-        when (pagingItems.loadState.append) {
-          is LoadState.Loading -> {
-            item { Loading() }
-          }
+          when (pagingItems.loadState.append) {
+            is LoadState.Loading -> {
+              item { Loading() }
+            }
 
-          is LoadState.Error -> {
-            item { ErrorMessage(text = "Error al cargar personajes") }
-          }
+            is LoadState.Error -> {
+              item { ErrorMessage(text = stringResource(R.string.error_loading_characters)) }
+            }
 
-          else -> {}
+            else -> {}
+          }
         }
       }
     }
@@ -257,7 +268,7 @@ fun CharacterCard(character: Character, onClick: () -> Unit) {
           Spacer(modifier = Modifier.width(6.dp))
 
           Text(
-            text = "${character.status} • ${character.species}",
+            text = stringResource(R.string.status_species, character.status, character.species),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
           )

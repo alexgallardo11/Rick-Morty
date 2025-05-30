@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">Rick &amp; Morty</string>
+    <string name="gender_prefix">Género: %1$s</string>
+    <string name="locations">Ubicaciones</string>
+    <string name="location">Ubicación</string>
+    <string name="location_prefix">Ubicación: </string>
+    <string name="episodes">Episodios</string>
+    <string name="appears_in_episodes">Aparece en %1$d episodios</string>
+    <string name="search_character">Buscar personaje</string>
+    <string name="close_search">Cerrar búsqueda</string>
+    <string name="any_option">(Cualquiera)</string>
+    <string name="back_to_list">Volver a la lista</string>
+    <string name="gender">Género</string>
+    <string name="cancel">Cancelar</string>
+    <string name="apply">Aplicar</string>
+    <string name="error_loading_characters">Error al cargar personajes</string>
+    <string name="no_connection_no_data">Sin conexión y sin datos locales para este personaje.</string>
+    <string name="unknown_error">Error desconocido</string>
+    <string name="status_species">%1$s • %2$s</string>
+    <string name="status_species_dash">%1$s - %2$s</string>
+    <string name="background">Fondo</string>
+    <string name="dropdown_expand_icon">Expandir selector</string>
+    <string name="filter_characters">Filtrar personajes</string>
+    <string name="status">Estado</string>
+    <string name="species">Especie</string>
+    <string name="search_icon">Buscar</string>
+    <string name="location_icon">Icono de ubicación</string>
 </resources>

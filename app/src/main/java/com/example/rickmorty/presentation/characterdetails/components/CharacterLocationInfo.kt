@@ -18,11 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.rickmorty.R
 import com.example.rickmorty.domain.model.Character
 
 @Composable
@@ -38,7 +40,7 @@ fun CharacterLocationInfo(character: Character, modifier: Modifier = Modifier) {
   ) {
     Column(modifier = Modifier.padding(16.dp)) {
       Text(
-        text = "Ubicaciones",
+        text = stringResource(R.string.locations),
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary
       )
@@ -67,14 +69,14 @@ fun CharacterLocationInfo(character: Character, modifier: Modifier = Modifier) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
           imageVector = Icons.Default.LocationOn,
-          contentDescription = "Ubicación",
+          contentDescription = stringResource(R.string.location_icon),
           tint = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
           text = buildAnnotatedString {
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-              append("Ubicación: ")
+              append(stringResource(R.string.location_prefix))
             }
             append(character.location.name)
           },

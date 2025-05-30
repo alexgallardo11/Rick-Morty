@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,7 +37,6 @@ import com.example.rickmorty.presentation.characterdetails.components.CharacterM
 import com.example.rickmorty.presentation.components.ErrorMessage
 import com.example.rickmorty.presentation.components.Loading
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterDetailScreen(
   modifier: Modifier = Modifier,
@@ -58,7 +57,7 @@ fun CharacterDetailScreen(
     ) {
     Image(
       painter = painterResource(id = R.drawable.background),
-      contentDescription = "background",
+      contentDescription = stringResource(R.string.background),
       modifier = Modifier.fillMaxSize().alpha(0.5f),
       contentScale = ContentScale.Crop
     )
@@ -73,7 +72,11 @@ fun CharacterDetailScreen(
       }
 
       is CharacterDetailUiState.Error -> {
-        val message = (uiState as CharacterDetailUiState.Error).message
+        val errorMsg = when (val message = (uiState as CharacterDetailUiState.Error).message) {
+          "Sin conexión y sin datos locales para este personaje." -> stringResource(R.string.no_connection_no_data)
+          "Error desconocido" -> stringResource(R.string.unknown_error)
+          else -> message
+        }
         Box(
           modifier = Modifier
             .fillMaxSize()
@@ -81,11 +84,7 @@ fun CharacterDetailScreen(
           contentAlignment = Alignment.Center
         ) {
           ErrorMessage(
-            text = if (message.contains("Unable to resolve host", ignoreCase = true) ||
-              message.contains("failed to connect", ignoreCase = true)
-            ) {
-              "Sin conexión y sin datos locales para este personaje."
-            } else message
+            text = errorMsg
           )
         }
       }
@@ -136,7 +135,7 @@ fun CharacterDetailScreen(
             )
           ) {
             Text(
-              text = "Volver a la lista",
+              text = stringResource(R.string.back_to_list),
               style = MaterialTheme.typography.labelLarge,
               textAlign = TextAlign.Center
             )

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.rickmorty.R
 import com.example.rickmorty.domain.model.Character
 
 @Composable
@@ -50,7 +52,7 @@ fun CharacterMainInfo(character: Character) {
       )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
-        text = "${character.status} - ${character.species}",
+        text = stringResource(R.string.status_species_dash, character.status, character.species),
         style = MaterialTheme.typography.bodyLarge,
         color = statusColor
       )
@@ -58,9 +60,8 @@ fun CharacterMainInfo(character: Character) {
 
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-      text = "Género: ${character.gender}",
+      text = stringResource(R.string.gender_prefix, character.gender),
       style = MaterialTheme.typography.bodyMedium,
-
       )
   }
 
